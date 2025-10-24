@@ -1,4 +1,12 @@
 import { useEffect, useState } from "react";
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import StudentLogin from "./components/StudentLogin";
+
+
+
+function FrontPage({message}: {message: string}){
+  return <h1>{message || "Loading..."}</h1>
+}
 
 function App() {
   const [message, setMessage] = useState("");
@@ -10,11 +18,16 @@ function App() {
   }, []);
 
   return (
-    <div>
-      <h1>
-        {message || "Loading..."}
-      </h1>
-    </div>
+    <BrowserRouter>
+      <nav>
+        <Link to={"/"}>FrontPage</Link> | {" "}
+        <Link to={"/login"}>LoginPage</Link>
+      </nav>
+      <Routes>
+        <Route path="/" element={<FrontPage message={message}/>}/>
+        <Route path="/login" element={<StudentLogin/>}/>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
