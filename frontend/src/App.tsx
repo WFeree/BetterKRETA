@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import NewStudent from "./components/newStudent";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -11,9 +12,7 @@ function App() {
 
   return (
     <div>
-      <h1>
-        {message || "Loading..."}
-      </h1>
+      <NewStudent/>
     </div>
   );
 }
