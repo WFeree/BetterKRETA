@@ -1,10 +1,15 @@
 from rest_framework import serializers
-from .models import Student, Subject, Enrollment, Mark
+from .models import Student, Enrollment, Mark
 
 class MarkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mark
         fields = ['value', 'description']
+
+class MarkCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Mark
+        fields = ['id', 'enrollment', 'value', 'description']
 
 class EnrollmentSerializer(serializers.ModelSerializer):
     marks = MarkSerializer(many=True, read_only=True)
@@ -12,11 +17,11 @@ class EnrollmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Enrollment
-        fields = ['subject', 'marks']
+        fields = ['id', 'subject', 'marks']
 
 class StudentSerializer(serializers.ModelSerializer):
     enrollments = EnrollmentSerializer(source='enrollment_set', many=True, read_only=True)
 
     class Meta:
         model = Student
-        fields = ['id', 'full_name', 'enrollments']
+        fields = ['id', 'full_name', 'enrollments', 'username', 'password']

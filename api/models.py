@@ -1,7 +1,10 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Student(models.Model):
+    username = models.CharField(max_length=100)
+    password = models.CharField(max_length=100)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     subjects = models.ManyToManyField('Subject', through='Enrollment')
@@ -25,7 +28,7 @@ class Enrollment(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together= ('student', 'subject')
+        unique_together = ('student', 'subject')
 
     def __str__(self):
         return f"{self.student.first_name} {self.student.last_name} - {self.subject.name}"
