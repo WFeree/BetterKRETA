@@ -1,121 +1,310 @@
-import { useState } from "react"
+import { useForm, Controller, type SubmitHandler } from "react-hook-form"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Checkbox } from "@/components/ui/checkbox"
-import { ChevronLeft } from "lucide-react"
 
-import { SelectType as SelectJelleg } from "./SelectType"
-import { SelectClass }  from "./SelectClass"
-import {SelectMajor}  from "./SelectMajor"
-import { SelectDate } from "./SelectDate"
-import { ZipInput } from "./ZipInput"
+import SelectDate from "./SelectDate"
+import SelectClass from "./SelectClass"
+import SelectMajor from "./SelectMajor"
+import SelectJelleg from "./SelectType"
+import ZipInput from "./ZipInput"
 
-export default function AddStudentForm() {
-  const [isDormStudent, setIsDormStudent] = useState(false)
+type FormValues = {
+  nev: string
+  anyjaNeve: string
+  szuletesiHely: string
+  szuletesiIdo: string
+  iranyitoszam: string
+  telepules: string
+  kozterNev: string
+  kozterJelleg: string
+  hazszam: string
+  beiratkozasIdeje: string
+  szak: string
+  osztaly: string
+  kollegista: boolean
+  kollegiumNeve?: string
+}
+
+export default function NewStudent() {
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    formState: { errors },
+  } = useForm<FormValues>({
+    defaultValues: {
+      kollegista: false,
+    },
+  })
+
+  const isDormStudent = watch("kollegista")
+
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
+    console.log("Form submitted:", data)
+  }
+
+  const inputErrorClass = (name: keyof FormValues) =>
+    errors[name] ? "border-red-500 focus-visible:ring-red-500" : ""
 
   return (
-    <div id="container" className="mx-auto w-[80%] px-10">
-      <div className="flex items-center justify-between">
-        <div id="vissza" className="flex text-gray-500"><ChevronLeft/><span>Vissza</span></div>
-        <h2 className="font-bold text-2xl text-center py-6">Új tanuló hozzáadása</h2>
-        <div className="text-gray-500">Törzslapszám: <span>{}</span></div>
-      </div>
+    <div id="container" className="mx-auto max-w-4xl px-10">
+      <h2 className="font-bold text-2xl text-center py-6">Új tanuló hozzáadása</h2>
+
       <h3 className="font-bold">Személyes adatok</h3>
-      <div id="personal" className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <div id="left" className="flex flex-col gap-4">
-          <div>
-            <Label className="py-2">Név</Label>
-            <Input></Input>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div id="personal" className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div id="left" className="flex flex-col gap-4">
+            {/* Név */}
+            <div>
+              <Label className="py-2">Név</Label>
+              <Input
+                className={inputErrorClass("nev")}
+                {...register("nev", {
+                  required: "A név megadása kötelező",
+                  validate: (v) =>
+                    v.trim().split(" ").length >= 2 || "Legalább két szóból kell állnia",
+                })}
+              />
+              {errors.nev && <p className="text-red-500 text-sm">{errors.nev.message}</p>}
+            </div>
+
+            {/* Anyja neve */}
+            <div>
+              <Label className="py-2">Anyja neve</Label>
+              <Input
+                className={inputErrorClass("anyjaNeve")}
+                {...register("anyjaNeve", {
+                  required: "Anyja neve kötelező",
+                  validate: (v) =>
+                    v.trim().split(" ").length >= 2 ||
+                    "Legalább két szóból kell állnia",
+                })}
+              />
+              {errors.anyjaNeve && (
+                <p className="text-red-500 text-sm">{errors.anyjaNeve.message}</p>
+              )}
+            </div>
           </div>
-          <div>
-            <Label className="py-2">Anyja neve</Label>
-            <Input></Input>
+
+          <div id="right" className="flex flex-col gap-4">
+            {/* Születési hely */}
+            <div>
+              <Label className="py-2">Születési helye</Label>
+              <Input
+                className={inputErrorClass("szuletesiHely")}
+                {...register("szuletesiHely", {
+                  required: "A születési hely megadása kötelező",})}
+              />
+              {errors.szuletesiHely && (
+                <p className="text-red-500 text-sm">{errors.szuletesiHely.message}</p>
+              )}
+            </div>
+
+            {/* Születési idő */}
+            <div>
+              <Label className="py-2">Születési ideje</Label>
+              <Controller
+                control={control}
+                name="szuletesiIdo"
+                rules={{ required: "A születési idő megadása kötelező" }}
+                render={({ field }) => (
+                  <SelectDate value={field.value} onChange={field.onChange} />
+                )}
+              />
+              {errors.szuletesiIdo && (
+                <p className="text-red-500 text-sm">{errors.szuletesiIdo.message}</p>
+              )}
+            </div>
           </div>
         </div>
 
-        <div id="right" className="flex flex-col gap-4">
-          <div>
-            <Label className="py-2">Születési helye</Label>
-            <Input></Input>
-          </div>
-          <div>
-            <Label className="py-2">Születési ideje</Label>
-            <SelectDate/>
-          </div>
-        </div>
-      </div>
-      <div className="w-full flex justify-between gap-2 pt-6 flex-wrap md:flex-nowrap">
-            <div className="w-full">
-              <Label className="py-2">Irányítószám</Label>
-              <ZipInput/>
-            </div>
-            <div className="w-full">
-              <Label className="py-2">Település</Label>
-              <Input />
-            </div>
-            <div className="w-full">
-              <Label className="py-2">Közter. neve</Label>
-              <Input />
-            </div>
-            <div className="w-full">
-              <Label className="py-2 text-nowrap">Közter. jellege</Label>
-              <SelectJelleg/>
-            </div>
-            <div className="w-full">
-              <Label className="py-2">Házszám</Label>
-              <Input/>
-            </div>
-          </div>
-
-      <Separator className="my-6"/>
-
-      <h3 className="font-bold">Beiratkozás adatai</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6">
-        <div id="left" className="flex flex-col gap-4 ">
+        {/* Cím adatok */}
+        <div className="w-full flex justify-between gap-2 pt-6 flex-wrap md:flex-nowrap">
           <div className="w-full">
-            <Label className="py-2">Beiratkozás időpontja</Label>
-            <SelectDate></SelectDate>
-          </div>
-
-          <div className="w-full flex gap-4 flex-wrap md:flex-nowrap">
-            <div className="w-full md:max-w-[76%]">
-              <Label className="py-2">Szak</Label>
-              <SelectMajor></SelectMajor>
-            </div>
-            <div className="w-full md:min-w-[20%]">
-              <Label className="py-2">Osztály</Label>
-              <SelectClass></SelectClass>
-            </div>
-          </div>
-
-        </div>
-
-        <div id="right" className="flex flex-col gap-4">
-          <div className="flex flex-col items-start gap-1 min-h-20">
-            <Label htmlFor="dorm" className="pt-2 pb-1">Kollégista?</Label>
-            <Checkbox
-              id="dorm"
-              className="h-9 w-9"
-              checked={isDormStudent}
-              onCheckedChange={(checked) => setIsDormStudent(!!checked)}
+            <Label className="py-2">Irányítószám</Label>
+            <Controller
+              control={control}
+              name="iranyitoszam"
+              rules={{
+                required: "Irányítószám kötelező",
+                maxLength: { value: 4, message: "Legfeljebb 4 számjegy lehet" },
+                pattern: { value: /^[0-9]{4}$/, message: "Csak számokat tartalmazhat" },
+              }}
+              render={({ field }) => (
+                <ZipInput value={field.value} onChange={field.onChange} />
+              )}
             />
+            {errors.iranyitoszam && (
+              <p className="text-red-500 text-sm">{errors.iranyitoszam.message}</p>
+            )}
           </div>
 
-          <div className="flex flex-col gap-1">
-            <Label htmlFor="dormWhere">Kollégium neve</Label>
+          <div className="w-full">
+            <Label className="py-2">Település</Label>
             <Input
-              id="dormWhere"
-              disabled={!isDormStudent}
+              className={inputErrorClass("telepules")}
+              {...register("telepules", {
+                required: "Település megadása kötelező",
+                validate: (v) =>
+                  v.trim().split(" ").length === 1 ||
+                  "Csak egy szóból állhat",
+              })}
             />
+            {errors.telepules && (
+              <p className="text-red-500 text-sm">{errors.telepules.message}</p>
+            )}
+          </div>
+
+          <div className="w-full">
+            <Label className="py-2">Közter. neve</Label>
+            <Input
+              className={inputErrorClass("kozterNev")}
+              {...register("kozterNev", {
+                required: "A közterület neve kötelező",
+                validate: (v) =>
+                  v.trim().split(" ").length === 1 ||
+                  "Csak egy szóból állhat",
+              })}
+            />
+            {errors.kozterNev && (
+              <p className="text-red-500 text-sm">{errors.kozterNev.message}</p>
+            )}
+          </div>
+
+          <div className="w-full">
+            <Label className="py-2 text-nowrap">Közter. jellege</Label>
+            <Controller
+              control={control}
+              name="kozterJelleg"
+              rules={{ required: "A közterület jellege kötelező" }}
+              render={({ field }) => (
+                <SelectJelleg value={field.value} onChange={field.onChange} />
+              )}
+            />
+            {errors.kozterJelleg && (
+              <p className="text-red-500 text-sm">{errors.kozterJelleg.message}</p>
+            )}
+          </div>
+
+          <div className="w-full">
+            <Label className="py-2">Házszám</Label>
+            <Input
+              className={inputErrorClass("hazszam")}
+              {...register("hazszam", {
+                required: "Házszám kötelező",
+                pattern: {
+                  value: /^[0-9]+[a-zA-Z/]*$/,
+                  message: "Csak számokat és betűket tartalmazhat (pl. 31/B)",
+                },
+              })}
+            />
+            {errors.hazszam && (
+              <p className="text-red-500 text-sm">{errors.hazszam.message}</p>
+            )}
           </div>
         </div>
-      </div>
-      <Button className="w-full hover:cursor-pointer">Új tanuló hozzáadása</Button>
+
+        <Separator className="my-6" />
+
+        {/* Beiratkozás adatai */}
+        <h3 className="font-bold">Beiratkozás adatai</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6">
+          <div id="left" className="flex flex-col gap-4 ">
+            <div className="w-full">
+              <Label className="py-2">Beiratkozás időpontja</Label>
+              <Controller
+                control={control}
+                name="beiratkozasIdeje"
+                rules={{ required: "A beiratkozás időpontja kötelező" }}
+                render={({ field }) => (
+                  <SelectDate value={field.value} onChange={field.onChange} />
+                )}
+              />
+              {errors.beiratkozasIdeje && (
+                <p className="text-red-500 text-sm">{errors.beiratkozasIdeje.message}</p>
+              )}
+            </div>
+
+            <div className="w-full flex gap-4 flex-wrap md:flex-nowrap">
+              <div className="w-full md:max-w-[50%] min-w-[50%]">
+                <Label className="py-2">Szak</Label>
+                <Controller
+                  control={control}
+                  name="szak"
+                  rules={{ required: "Szak megadása kötelező" }}
+                  render={({ field }) => (
+                    <SelectMajor value={field.value} onChange={field.onChange} />
+                  )}
+                />
+                {errors.szak && (
+                  <p className="text-red-500 text-sm">{errors.szak.message}</p>
+                )}
+              </div>
+
+              <div className="w-full md:max-w-[50%]">
+                <Label className="py-2">Osztály</Label>
+                <Controller
+                  control={control}
+                  name="osztaly"
+                  rules={{ required: "Osztály megadása kötelező" }}
+                  render={({ field }) => (
+                    <SelectClass value={field.value} onChange={field.onChange} />
+                  )}
+                />
+                {errors.osztaly && (
+                  <p className="text-red-500 text-sm">{errors.osztaly.message}</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div id="right" className="flex flex-col gap-4">
+            <div className="flex flex-col items-start gap-1 min-h-20">
+              <Label htmlFor="dorm" className="pt-2 pb-1">
+                Kollégista?
+              </Label>
+              <Controller
+                control={control}
+                name="kollegista"
+                render={({ field }) => (
+                  <Checkbox
+                    id="dorm"
+                    className="h-9 w-9"
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                )}
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="dormWhere">Kollégium neve</Label>
+              <Input
+                id="dormWhere"
+                className={inputErrorClass("kollegiumNeve")}
+                disabled={!isDormStudent}
+                {...register("kollegiumNeve", {
+                  required: isDormStudent
+                    ? "A kollégium neve kötelező, ha kollégista"
+                    : false,
+                })}
+              />
+              {errors.kollegiumNeve && (
+                <p className="text-red-500 text-sm">{errors.kollegiumNeve.message}</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <Button className="w-full hover:cursor-pointer mb-4" type="submit">
+          Új tanuló hozzáadása
+        </Button>
+      </form>
     </div>
   )
 }
-// TODO: Save gomb, mentés is
-// TODO: Törzslapszám generálás
-// TODO: ADMIN felület
+// FIXME: css- rájönni mit hogy
