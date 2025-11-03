@@ -1,32 +1,28 @@
-type Props = {
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+interface SelectMajorProps {
   value?: string
-  onChange?: (v: string) => void
-  required?: boolean
-  name?: string
-  className?: string
+  onChange?: (value: string) => void
 }
 
-export default function SelectMajor({ value = "", onChange = () => {}, required = false, name, className }: Props) {
-  const options = [
-    { value: "", label: "Válassz szakot" },
-    { value: "informatika", label: "Informatika" },
-    { value: "gazdasag", label: "Gazdaság" },
-    { value: "muveszet", label: "Művészet" },
-  ]
-
+export default function SelectMajor({ value, onChange }: SelectMajorProps) {
   return (
-    <select
-      className={`w-full rounded-md border px-3 py-2 ${className ?? ""}`}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      required={required}
-      name={name}
-    >
-      {options.map((o) => (
-        <option key={o.value} value={o.value} className="text-md">
-          {o.label}
-        </option>
-      ))}
-    </select>
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger className="w-full">
+        <SelectValue placeholder="Válassz szakot" />
+      </SelectTrigger>
+      <SelectContent>
+        {/* Replace these with your real majors */}
+        <SelectItem value="informatika">Informatika</SelectItem>
+        <SelectItem value="gepeszet">Gépészet</SelectItem>
+        <SelectItem value="elektronika">Elektronika</SelectItem>
+      </SelectContent>
+    </Select>
   )
 }

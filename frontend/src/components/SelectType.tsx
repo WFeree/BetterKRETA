@@ -1,33 +1,29 @@
-type Props = {
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+interface SelectTypeProps {
   value?: string
-  onChange?: (v: string) => void
-  required?: boolean
-  name?: string
-  className?: string
+  onChange?: (value: string) => void
 }
 
-export default function SelectType({ value = "", onChange = () => {}, required = false, name, className }: Props) {
-  const options = [
-    { value: "", label: "Válassz jelleget" },
-    { value: "utca", label: "utca" },
-    { value: "ter", label: "tér" },
-    { value: "setany", label: "sétány" },
-    { value: "koz", label: "köz" },
-  ]
-
+export default function SelectType({ value, onChange }: SelectTypeProps) {
   return (
-    <select
-      className={`w-full rounded-md border px-3 py-2 ${className ?? ""}`}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      required={required}
-      name={name}
-    >
-      {options.map((o) => (
-        <option key={o.value} value={o.value}>
-          {o.label}
-        </option>
-      ))}
-    </select>
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger className="w-full">
+        <SelectValue placeholder="Válassz jelleget" />
+      </SelectTrigger>
+      <SelectContent>
+        {/* Replace these with your real street types */}
+        <SelectItem value="utca">utca</SelectItem>
+        <SelectItem value="tér">tér</SelectItem>
+        <SelectItem value="út">út</SelectItem>
+        <SelectItem value="körút">körút</SelectItem>
+      </SelectContent>
+    </Select>
   )
 }

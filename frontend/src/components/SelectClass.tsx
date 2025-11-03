@@ -1,35 +1,28 @@
-type Props = {
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+interface SelectClassProps {
   value?: string
-  onChange?: (v: string) => void
-  required?: boolean
-  name?: string
-  className?: string,
+  onChange?: (value: string) => void
 }
 
-export default function SelectClass({ value = "", onChange = () => {}, required = false, name, className }: Props) {
-  const options = [
-    { value: "A", label: "A" },
-    { value: "B", label: "B" },
-    { value: "C", label: "C" },
-    { value: "D", label: "D" },
-    { value: "E", label: "E" },
-    { value: "F", label: "F" },
-
-  ]
-
+export default function SelectClass({ value, onChange }: SelectClassProps) {
   return (
-    <select
-      className={`w-full rounded-md border px-3 py-2 ${className ?? ""}`}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      required={required}
-      name={name}
-    >
-      {options.map((o) => (
-        <option key={o.value} value={o.value}>
-          {o.label}
-        </option>
-      ))}
-    </select>
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger className="w-full">
+        <SelectValue placeholder="Válassz osztályt" />
+      </SelectTrigger>
+      <SelectContent>
+        {/* Replace these with your real classes */}
+        <SelectItem value="9A">9.A</SelectItem>
+        <SelectItem value="10B">10.B</SelectItem>
+        <SelectItem value="11C">11.C</SelectItem>
+      </SelectContent>
+    </Select>
   )
 }
