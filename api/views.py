@@ -105,3 +105,59 @@ def create_student(request):
                         status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+from django.db.models import Count
+from datetime import datetime
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def student_statistics(request):
+    students = Student.objects.all()
+    kollegistak = students.filter(kollegista=True).count()
+    debreceniek = students.filter(telepules__iexact="Debrecen").count()
+    bejarosok = students.exclude(telepules__iexact="Debrecen").filter(kollegista=False).count()
+
+    # Évenként (beiratkozás éve)
+    evenkent = (
+        students
+        .values_list("beiratkozasIdeje", flat=True)
+    )
+    ev_stat = {}
+    for d in evenkent:
+        ev = d.year
+        ev_stat[ev] = ev_stat.get(ev, 0) + 1
+
+    # Szakonként
+    szak_stat = (
+        students
+        .values("szak")
+        .annotate(letszam=Count("id"))
+        .order_by("szak")
+    )
+
+    return Response({
+        "kollegistak": kollegistak,
+        "debreceniek": debreceniek,
+        "bejarosok": bejarosok,
+        "evenkent": ev_stat,
+        "szakonkent": list(szak_stat)
+    })
+
+
+@api_view(["DELETE"])
+@permission_classes([AllowAny])
+def delete_student(request, student_id):
+    try:
+        student = Student.objects.get(id=student_id)
+        student.delete()
+        return Response({"message": "Tanuló törölve."})
+    except Student.DoesNotExist:
+        return Response({"error": "Tanuló nem található."}, status=404)
+    
+from .serializers import AdminStudentSerializer
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticatedOrReadOnly])
+def get(request):
+    students = Student.objects.all()
+    serializer = AdminStudentSerializer(students, many=True)
+    return Response(serializer.data)

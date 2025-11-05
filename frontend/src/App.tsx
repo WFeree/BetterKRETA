@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import StudentLogin from "./components/StudentLogin";
 import NewStudent from "./components/newStudent";
+import AdminStudents from "./components/adminStudents";
 
 
 function FrontPage({message}: {message: string}){
@@ -22,12 +23,14 @@ function App() {
       <nav>
         <Link to={"/"}>FrontPage</Link> | {" "}
         <Link to={"/login"}>LoginPage</Link> | {" "}
-        <Link to={"/newStudent"}>newStudent</Link>
+        <Link to={"/newStudent"}>newStudent</Link> | {" "}
+        <Link to={"/students/statistics/"}>StudentStatistics</Link>
       </nav>
       <Routes>
         <Route path="/" element={<FrontPage message={message}/>}/>
         <Route path="/login" element={<StudentLogin/>}/>
         <Route path="/newStudent" element={<NewStudent/>}/>
+        <Route path="/students/statistics/" element={<AdminStudents/>}/>
       </Routes>
     </BrowserRouter>
   );

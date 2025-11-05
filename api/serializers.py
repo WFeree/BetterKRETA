@@ -52,3 +52,15 @@ class NewStudentSerializer(serializers.ModelSerializer):
         student.set_pwd(password)
         student.save()
         return student
+class AdminStudentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = [
+            'id',
+            'nev',
+            'telepules',
+            'kollegista',
+            'szak',
+            'beiratkozasIdeje'
+        ]
+

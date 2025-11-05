@@ -19,9 +19,13 @@ export default function SelectClass({ value, onChange }: SelectClassProps) {
       </SelectTrigger>
       <SelectContent>
         {/* Replace these with your real classes */}
-        <SelectItem value="9A">9.A</SelectItem>
-        <SelectItem value="10B">10.B</SelectItem>
-        <SelectItem value="11C">11.C</SelectItem>
+        <SelectItem value="A">A</SelectItem>
+        <SelectItem value="B">B</SelectItem>
+        <SelectItem value="C">C</SelectItem>
+        <SelectItem value="D">D</SelectItem>
+        <SelectItem value="E">E</SelectItem>
+        <SelectItem value="F">F</SelectItem>
+        <SelectItem value="G">G</SelectItem>
       </SelectContent>
     </Select>
   )

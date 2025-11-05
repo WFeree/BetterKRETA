@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from api.views import hello_world, get, student_login, add_mark, subject_averages, student_averages, create_student
+from api.views import student_statistics, delete_student, hello_world, get, student_login, add_mark, subject_averages, student_averages, create_student
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -27,4 +27,6 @@ urlpatterns = [
     path('api/subject-averages/', subject_averages, name='subject-averages'),
     path('api/student-averages/', student_averages, name='student-averages'),
     path('api/students/create/', create_student, name='create-student'),
-    ]
+    path('api/students/statistics/', student_statistics, name='student-statistics'),
+    path('api/students/delete/<int:student_id>/', delete_student, name='delete-student'),
+]

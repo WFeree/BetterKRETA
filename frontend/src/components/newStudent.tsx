@@ -10,7 +10,6 @@ import SelectClass from "./SelectClass"
 import SelectMajor from "./SelectMajor"
 import SelectJelleg from "./SelectType"
 import ZipInput from "./ZipInput"
-import { useState } from "react"
 
 type FormValues = {
   nev: string
