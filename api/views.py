@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 from .models import Student, Subject, Enrollment, Mark
-from .serializers import StudentSerializer, MarkCreateSerializer
+from .serializers import StudentSerializer, MarkCreateSerializer, NewStudentSerializer
 from django.db.models import Avg
 # Create your views here.
 
@@ -26,19 +26,19 @@ def student_login(request):
     password = request.data.get("password")
 
     if not username or not password:
-        return Response(
-            {"error":"Username and password are required"},
-            status= status.HTTP_400_BAD_REQUEST
-        )
+        return Response({"error": "Username and password are required"},
+                        status=status.HTTP_400_BAD_REQUEST)
     
     try:
-        student = Student.objects.get(username=username, password=password)
+        student = Student.objects.get(username=username)
     except Student.DoesNotExist:
-        return Response(
-            {"error": "Invalid credentials."},
-            status=status.HTTP_401_UNAUTHORIZED
-        )
-    
+        return Response({"error": "Invalid credentials."},
+                        status=status.HTTP_401_UNAUTHORIZED)
+
+    if not student.check_password(password):
+        return Response({"error": "Invalid credentials."},
+                        status=status.HTTP_401_UNAUTHORIZED)
+
     serializer = StudentSerializer(student)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -87,3 +87,21 @@ def student_averages(request):
         })
 
     return Response(data)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def create_student(request):
+    serializer = NewStudentSerializer(data=request.data)
+    if serializer.is_valid():
+        student = serializer.save()
+        response_data = {field: getattr(student, field) for field in [
+            'nev', 'anyjaNeve', 'szuletesiHely', 'szuletesiIdo',
+            'iranyitoszam', 'telepules', 'kozterNev', 'kozterJelleg',
+            'hazszam', 'beiratkozasIdeje', 'szak', 'osztaly',
+            'kollegista', 'kollegiumNeve', 'username'
+        ]}
+        return Response({"message": "Student created", "student": response_data},
+                        status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+

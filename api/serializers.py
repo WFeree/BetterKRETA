@@ -1,5 +1,8 @@
 from rest_framework import serializers
 from .models import Student, Enrollment, Mark
+from rest_framework import serializers
+from django.contrib.auth.hashers import make_password
+from .models import Student
 
 class MarkSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,3 +28,27 @@ class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = ['id', 'full_name', 'enrollments', 'username', 'password']
+
+
+from rest_framework import serializers
+from .models import Student
+
+class NewStudentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = [
+            'nev', 'anyjaNeve', 'szuletesiHely', 'szuletesiIdo',
+            'iranyitoszam', 'telepules', 'kozterNev', 'kozterJelleg',
+            'hazszam', 'beiratkozasIdeje', 'szak', 'osztaly',
+            'kollegista', 'kollegiumNeve', 'username', 'password'
+        ]
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
+
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+        student = Student(**validated_data)
+        student.set_pwd(password)
+        student.save()
+        return student
