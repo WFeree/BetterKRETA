@@ -14,7 +14,7 @@ def hello_world(request):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticatedOrReadOnly])
-def get(request):
+def get_students(request):
     students = Student.objects.all()
     serializer = StudentSerializer(students, many=True)
     return Response(serializer.data)
@@ -35,7 +35,7 @@ def student_login(request):
         return Response({"error": "Invalid credentials."},
                         status=status.HTTP_401_UNAUTHORIZED)
 
-    if not student.check_password(password):
+    if not student.check_pwd(password):
         return Response({"error": "Invalid credentials."},
                         status=status.HTTP_401_UNAUTHORIZED)
 
@@ -82,7 +82,7 @@ def student_averages(request):
         avg_value = marks.aggregate(avg=Avg('value'))['avg']
 
         data.append({
-            "student":student.full_name,
+            "student":student.nev,
             "average": round(avg_value, 2) if avg_value is not None else None
         })
 

@@ -16,11 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from api.views import student_statistics, delete_student, hello_world, get, student_login, add_mark, subject_averages, student_averages, create_student
+from api.views import student_statistics, delete_student, get_students, get, student_login, add_mark, subject_averages, student_averages, create_student
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/hello/", hello_world),
+    path("api/hello/", get_students),
     path("api/students/", get, name='student-list'),
     path('api/login/', student_login, name='student-login'),
     path('api/add-mark/', add_mark, name='add-mark'),

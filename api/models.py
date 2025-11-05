@@ -20,16 +20,11 @@ class Student(models.Model):
     kollegiumNeve = models.CharField(max_length=100, blank=True, null=True)
     username = models.CharField(max_length=100, unique=True)
     password = models.CharField(max_length=128)
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
     subjects = models.ManyToManyField('Subject', through='Enrollment')
 
-    @property
-    def full_name(self):
-        return f"{self.first_name} {self.last_name}"
-
     def __str__(self):
-        return f"{self.first_name} {self.last_name}"
+        return f"{self.nev}"
+    
     def set_pwd(self, raw_pwd):
         self.password = make_password(raw_pwd)
         
@@ -51,7 +46,7 @@ class Enrollment(models.Model):
         unique_together = ('student', 'subject')
 
     def __str__(self):
-        return f"{self.student.first_name} {self.student.last_name} - {self.subject.name}"
+        return f"{self.student.nev} - {self.subject.name}"
     
 class Mark(models.Model):
     enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE, related_name='marks')
@@ -59,4 +54,4 @@ class Mark(models.Model):
     description = models.CharField(max_length=200, null=True)
     
     def __str__(self):
-        return f"{self.enrollment.student.first_name} {self.enrollment.student.last_name} ({self.enrollment.subject.name}) - {self.value}"
+        return f"{self.enrollment.student.nev} ({self.enrollment.subject.name}) - {self.value}"
