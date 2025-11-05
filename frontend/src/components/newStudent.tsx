@@ -38,6 +38,8 @@ export default function NewStudent() {
   } = useForm<FormValues>({
     defaultValues: {
       kollegista: false,
+      szuletesiIdo: "",
+      beiratkozasIdeje: "",
     },
   })
 
@@ -108,11 +110,17 @@ export default function NewStudent() {
             <div>
               <Label className="py-2">Születési ideje</Label>
               <Controller
-                control={control}
                 name="szuletesiIdo"
+                control={control}
                 rules={{ required: "A születési idő megadása kötelező" }}
                 render={({ field }) => (
-                  <SelectDate value={field.value} onChange={field.onChange} />
+                  <SelectDate
+                    label="Születési ideje"
+                    value={field.value}
+                    onChange={field.onChange}
+                    required
+                    max={new Date().toISOString().split("T")[0]}
+                  />
                 )}
               />
               {errors.szuletesiIdo && (
@@ -217,11 +225,16 @@ export default function NewStudent() {
             <div className="w-full">
               <Label className="py-2">Beiratkozás időpontja</Label>
               <Controller
-                control={control}
                 name="beiratkozasIdeje"
-                rules={{ required: "A beiratkozás időpontja kötelező" }}
+                control={control}
+                rules={{ required: "Beiratkozás időpontja kötelező" }}
                 render={({ field }) => (
-                  <SelectDate value={field.value} onChange={field.onChange} />
+                  <SelectDate
+                    label="Beiratkozás időpontja"
+                    value={field.value}
+                    onChange={field.onChange}
+                    required
+                  />
                 )}
               />
               {errors.beiratkozasIdeje && (
